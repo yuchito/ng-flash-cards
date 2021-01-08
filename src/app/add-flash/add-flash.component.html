@@ -1,0 +1,59 @@
+<div class="modal" [ngClass]="{'is-active' : isToggled}">
+  <form #flashForm="ngForm">
+    <h1 class="is-size-3">{{editing ? 'Edit' : 'Add New '}} Flash Card</h1>
+    <div class="field">
+        <label class="label" for="question">Question</label>
+        <div class="control">
+            <input required class="input" type="text"
+             name="question" #question="ngModel"(ngModel)="flash.question"
+            [ngClass]="{'is-danger': question.invalid && !question.pristine}"
+            placeholder="Question">
+        </div>
+    </div>
+    <div class="field">
+        <label for="answer" class="label">Answer</label>
+        <div class="control">
+            <input required class="input" type="text"
+             name="answer" #answer (ngModel)="flash.answer"
+             [ngClass]="{'is-danger': answer.invalid && !answer.pristine}"
+             placeholder="Answer">
+        </div>
+    </div>
+    <button
+     class="button is-success"
+     type="update"
+     *ngIf="editing; else submitBtn"
+     (click)="handleUpdate()"
+     [disabled]="flashForm.invalid">Update</button>
+    <ng-template #submitBtn>
+      <button
+       class="button is-primary"
+       type="submit"
+       (click)="handleSubmit()"
+       [disabled]="flashForm.invalid">Submit</button>
+    </ng-template>
+    <button
+     class="button cancel-btn"
+     *ngIf="editing; else clearBtn"
+     (click)="handleCancel()">Cancel</button>
+    <ng-template #clearBtn>
+      <button class="button clear-btn"
+       (click)="handleClear()">Clear</button>
+    </ng-template>
+</form>
+</div>
+<div *ngIf="!isToggled">
+  <div class="flashs">
+    <app-flash
+    *ngFor="let flash of flashs$ | async"
+    [flash]="flash"
+    (onToggle)="handleToggleCard($event)"
+    (onDelete)="handleDelete($event)"
+    (onEdit)="handleEdit($event)"
+    (onRememberedChange)="handleRememberedChange($event)"
+    ></app-flash>
+  </div>
+  <div>
+    <button class="button is-info add-btn" (click)="openDialog()">Add question</button>
+  </div>
+</div>
